@@ -21,7 +21,7 @@ import { useAudioPlayback } from "@/hooks/useAudioPlayback";
 import { useAudioWebSocket } from "@/hooks/useAudioWebSocket";
 import { sessionsApi } from "@/services/sessions";
 import HardwareCheck from "@/components/HardwareCheck";
-import { CheckCircle, Mic, MicOff } from "lucide-react";
+import { CheckCircle, Mic, MicOff, AlertCircle } from "lucide-react";
 import type { CandidateInfo, InterviewState, InterviewSpeaker, TranscriptTurn } from "@/types";
 
 export default function InterviewPage() {
@@ -46,13 +46,17 @@ export default function InterviewPage() {
       .then((res) => {
         setCandidateInfo(res.data);
         setSessionId(res.data.session_id);
-        if (res.data.session_status === "ended") setInterviewState("complete");
+        if (res.data.session_status === "ended") {
+          setInterviewState(res.data.end_reason === "error" ? "failed" : "complete");
+        }
       })
-      .catch(() => setInterviewState("complete"));
+      .catch(() => setInterviewState("failed"));
   }, [token]);
 
   const muteRef = useRef<(() => void) | null>(null);
   const unmuteRef = useRef<(() => void) | null>(null);
+  const stopCaptureRef = useRef<(() => void) | null>(null);
+  const stopPlaybackRef = useRef<(() => void) | null>(null);
 
   const handleStateChange = useCallback((state: InterviewState) => {
     setInterviewState(state);
@@ -66,6 +70,13 @@ export default function InterviewPage() {
         callAudioComplete();
       }, 10_000);
       waitForDrain(() => callAudioComplete());
+      return;
+    }
+
+    if (state === "complete" || state === "failed") {
+      muteRef.current?.();
+      stopCaptureRef.current?.();
+      stopPlaybackRef.current?.();
       return;
     }
 
@@ -146,6 +157,8 @@ export default function InterviewPage() {
 
   muteRef.current = mute;
   unmuteRef.current = unmute;
+  stopCaptureRef.current = stopCapture;
+  stopPlaybackRef.current = stopPlayback;
 
   const toggleMic = useCallback(() => {
     if (micMutedRef.current) {
@@ -226,16 +239,31 @@ export default function InterviewPage() {
     );
   }
 
-  // ── State F: Complete ───────────────────────────────────────────────────
+  // ── State F: Complete (successful end) ──────────────────────────────────
   if (interviewState === "complete") {
     return (
       <div className="max-w-xl mx-auto px-4 py-16 text-center space-y-4">
-        <div className="text-4xl">✅</div>
+        <CheckCircle className="h-10 w-10 text-green-600 mx-auto" />
         <h2 className="text-xl font-semibold">Interview Complete</h2>
         <p className="text-sm text-muted-foreground">
           Thank you. The interview has been recorded.
           <br />
           The hiring team will review your results and follow up with you.
+        </p>
+      </div>
+    );
+  }
+
+  // ── State G: Failed (end_reason=error / unrecoverable) ──────────────────
+  if (interviewState === "failed") {
+    return (
+      <div className="max-w-xl mx-auto px-4 py-16 text-center space-y-4">
+        <AlertCircle className="h-10 w-10 text-destructive mx-auto" />
+        <h2 className="text-xl font-semibold">Interview Interrupted</h2>
+        <p className="text-sm text-muted-foreground">
+          Something went wrong and this interview could not be completed.
+          <br />
+          Please contact the hiring team and ask for a new interview link.
         </p>
       </div>
     );

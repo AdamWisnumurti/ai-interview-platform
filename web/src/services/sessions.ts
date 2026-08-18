@@ -12,6 +12,9 @@ export const sessionsApi = {
       session: { reason },
     }),
 
+  revoke: (id: number) =>
+    api.delete<{ message: string }>(`/sessions/${id}`),
+
   getCoverage: (id: number) =>
     api.get<CoverageMap>(`/sessions/${id}/coverage`),
 
