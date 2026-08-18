@@ -21,7 +21,11 @@ export const sessionsApi = {
     }),
 
   getPortfolio: (id: number) =>
-    api.get<{ portfolio: Portfolio } | { status: string }>(`/sessions/${id}/portfolio`),
+    api.get<{
+      status?: string;
+      portfolio?: Portfolio;
+      error?: string | null;
+    }>(`/sessions/${id}/portfolio`),
 
   regeneratePortfolio: (id: number) =>
     api.post<{ message: string; portfolio: Portfolio }>(`/sessions/${id}/portfolio/regenerate`),

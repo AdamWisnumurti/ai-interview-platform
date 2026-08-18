@@ -25,7 +25,12 @@ export default function SkillPortfolioCard({
         {/* Skill header */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-start gap-3">
-            <LevelBadge level={effectiveLevel} />
+            <div className="space-y-1">
+              <LevelBadge level={effectiveLevel} />
+              <p className="text-[10px] uppercase tracking-wide text-muted-foreground text-center">
+                {override ? "Final" : "AI"}
+              </p>
+            </div>
             <div className="space-y-0.5">
               <div className="flex items-center gap-1.5">
                 <span className="font-semibold">{skill.skill_label}</span>
@@ -36,6 +41,11 @@ export default function SkillPortfolioCard({
                 )}
               </div>
               <ConfidenceIndicator confidence={skill.ai_confidence} />
+              {override && (
+                <p className="text-xs text-muted-foreground">
+                  AI suggested L{parseLevel(skill.ai_level)}; assessor set L{override.override_level}.
+                </p>
+              )}
             </div>
           </div>
           <OverridePanel skill={skill} existingOverride={override} onSaved={onOverrideSaved} />
@@ -45,6 +55,13 @@ export default function SkillPortfolioCard({
         {skill.ai_confidence?.toLowerCase() === "low" && (
           <div className="text-xs text-muted-foreground bg-amber-50 border border-amber-200 rounded px-3 py-2">
             Only briefly explored. Confidence is low — warrants a dedicated session if this skill matters.
+          </div>
+        )}
+
+        {/* Weak / missing evidence */}
+        {(!skill.evidence || skill.evidence.length === 0) && (
+          <div className="text-xs text-muted-foreground bg-muted/60 border rounded px-3 py-2">
+            No evidence quotes recorded for this skill. Treat the AI rating cautiously.
           </div>
         )}
 
