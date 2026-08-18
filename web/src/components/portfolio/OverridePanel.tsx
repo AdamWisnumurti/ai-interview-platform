@@ -71,6 +71,7 @@ export default function OverridePanel({ skill, existingOverride, onSaved }: Over
               <LevelBadge level={aiLevel} size="sm" />
             </div>
             <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
+              <Pencil className="h-3 w-3 mr-1" />
               Override with assessor rating
             </Button>
           </div>

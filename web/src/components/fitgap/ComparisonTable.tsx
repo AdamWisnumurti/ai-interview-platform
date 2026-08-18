@@ -58,7 +58,7 @@ export default function ComparisonTable({ comparisons }: ComparisonTableProps) {
                   c.result === "not_assessed" && "bg-amber-50/60"
                 )}
               >
-                <td className="px-4 py-2.5">{c.skill_label}</td>
+                <td className="px-4 py-2.5 break-anywhere max-w-[12rem] sm:max-w-none">{c.skill_label}</td>
                 <td className="px-4 py-2.5 text-center text-muted-foreground">
                   {LEVEL_LABELS[c.required_level] ?? `L${c.required_level}`}
                 </td>

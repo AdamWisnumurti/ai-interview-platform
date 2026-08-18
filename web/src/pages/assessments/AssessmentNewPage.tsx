@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { PageHeader } from "@/components/shared/PageHeader";
 import SkillCard from "@/components/assessment/SkillCard";
 import SkillPicker from "@/components/assessment/SkillPicker";
 import { ArrowLeft, Plus, Loader2 } from "lucide-react";
@@ -174,16 +175,20 @@ export default function AssessmentNewPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto">
-      {/* Breadcrumb */}
-      <div className="flex items-center gap-2 mb-6">
-        <Link to="/assessments" className="text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="h-4 w-4" />
-        </Link>
-        <span className="text-sm text-muted-foreground">Back</span>
-        <span className="text-sm text-muted-foreground">/</span>
-        <span className="text-sm font-medium">New Assessment</span>
-      </div>
+    <div className="max-w-4xl space-y-6">
+      <PageHeader
+        breadcrumb={
+          <Link
+            to="/assessments"
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Assessments
+          </Link>
+        }
+        title="New Assessment"
+        description="Define skills, time limits, and interview language."
+      />
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Prefill from vacancy — same field pattern as other selects */}
@@ -344,7 +349,9 @@ export default function AssessmentNewPage() {
         <Separator />
 
         {error && (
-          <p className="text-sm text-destructive">{error}</p>
+          <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive break-anywhere">
+            {error}
+          </div>
         )}
 
         {/* Actions */}

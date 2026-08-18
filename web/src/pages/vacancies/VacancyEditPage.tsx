@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
+import { PageHeader } from "@/components/shared/PageHeader";
+import { LoadingBlock } from "@/components/shared/EmptyState";
 import VacancySkillsEditor, {
   type VacancyFormValues,
 } from "@/components/vacancy/VacancySkillsEditor";
@@ -44,7 +45,7 @@ export default function VacancyEditPage() {
           skills: v.skills,
         });
       })
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setLoading(false));
   }, [id, reset]);
 
@@ -74,21 +75,27 @@ export default function VacancyEditPage() {
 
   if (loading) {
     return (
-      <div className="max-w-2xl mx-auto space-y-4">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-10 w-full" />
+      <div className="max-w-4xl space-y-6">
+        <LoadingBlock rows={2} />
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="flex items-center gap-2 mb-6">
-        <Link to="/vacancies" className="text-muted-foreground hover:text-foreground">
-          <ArrowLeft className="h-4 w-4" />
-        </Link>
-        <span className="text-sm font-medium">Edit Vacancy</span>
-      </div>
+    <div className="max-w-4xl space-y-6">
+      <PageHeader
+        breadcrumb={
+          <Link
+            to="/vacancies"
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="h-3.5 w-3.5" />
+            Vacancies
+          </Link>
+        }
+        title="Edit Vacancy"
+        description="Update role expectations and skill levels."
+      />
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-1.5">
@@ -119,9 +126,13 @@ export default function VacancyEditPage() {
           <Textarea rows={3} {...register("competency_expectations")} />
         </div>
 
-        {error && <p className="text-sm text-destructive">{error}</p>}
+        {error && (
+          <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive break-anywhere">
+            {error}
+          </div>
+        )}
 
-        <div className="flex justify-end gap-2">
+        <div className="flex justify-between gap-2">
           <Button type="button" variant="outline" onClick={() => navigate("/vacancies")}>
             Cancel
           </Button>
