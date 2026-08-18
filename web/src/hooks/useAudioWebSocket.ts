@@ -147,6 +147,8 @@ export function useAudioWebSocket({
   const disconnect = useCallback(() => {
     if (reconnectTimerRef.current) clearTimeout(reconnectTimerRef.current);
     reconnectAttemptsRef.current = RECONNECT_DELAYS.length; // prevent reconnect
+    // Candidate/assessor ended on purpose — do not treat the close as an error.
+    sessionEndedRef.current = true;
     wsRef.current?.close();
   }, []);
 
