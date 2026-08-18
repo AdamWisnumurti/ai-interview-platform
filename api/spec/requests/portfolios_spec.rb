@@ -140,6 +140,43 @@ RSpec.describe 'Portfolio decision contract', type: :request do
       expect(payload['portfolio']['skills']).not_to be_empty
       expect(payload.to_s).not_to match(/GEMINI|AIza/)
     end
+
+    it 'exports PDF when Gemini text includes characters outside Windows-1252' do
+      portfolio = create_portfolio!(session: session_record, status: 'complete')
+      skill = create_portfolio_skill!(portfolio)
+      skill.update!(
+        competency_summary: 'Used “smart quotes” and a bullet • plus ✅',
+        evidence: ['Quoted “Product Thinking”']
+      )
+      skill.create_assessor_override!(
+        ai_level: 3,
+        override_level: 2,
+        overridden_by: 1,
+        assessor_notes: 'Override note with arrow → and tick ✅'
+      )
+      vacancy = create_vacancy!(tenant_id: tenant_id)
+      FitGapReport.create!(
+        portfolio: portfolio,
+        vacancy: vacancy,
+        skill_comparisons: [
+          {
+            'skill_label' => 'Product Thinking',
+            'expected_level' => 3,
+            'candidate_level' => 2,
+            'result' => 'gap',
+            'delta' => -1
+          }
+        ],
+        culture_narrative: 'Culture fit — “strong”, with a tick ✅',
+        overall_narrative: 'Overall • gap on Product Thinking'
+      )
+
+      get "/api/v1/portfolios/#{portfolio.id}/export",
+          params: { format: 'pdf', vacancy_id: vacancy.id }
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body[0, 4]).to eq('%PDF')
+    end
   end
 
   describe 'POST /api/v1/portfolios/:id/fitgap' do
