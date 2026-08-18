@@ -12,13 +12,13 @@
 
 **Choice:** Option A. Option B is a follow-up. Option C is polish on top of A (shared layout, list search, empty/error states) — not the hero by itself.
 
-Rejected / deferred on purpose: invite email, enterprise CI, server-side search, Gemini Live rewrite, new tenant platform.
+Rejected / deferred on purpose: invite email, enterprise CI, server-side search, Gemini Live rewrite, new tenant platform, bundled Unicode TTF for PDF (transcode to Win1252 instead).
 
 ## What shipped (fullstack)
 
 | Seam | Change |
 |------|--------|
-| API | Gemini HTTP `v1` → `v1beta`; fit-gap emits `required_level` + `is_override`; regenerate only from `failed`; export/fit-gap refused until complete |
+| API | Gemini HTTP `v1` → `v1beta`; fit-gap emits `required_level` + `is_override`; regenerate only from `failed`; export/fit-gap refused until complete; PDF text transcoded for Prawn/Win1252 |
 | Web | Portfolio generating / failed / empty / complete; export & fit-gap gated; override vs AI visible; fit-gap `not_assessed`; candidate interrupted + recovery invite |
 | Data | No migration. Existing enums/statuses. Custom vacancy skills stay `skill_id: null` by design |
 | Adjacent | Prefill assessment from vacancy; hardware-check retry; list search/filter + overflow |
@@ -37,6 +37,7 @@ Rejected / deferred on purpose: invite email, enterprise CI, server-side search,
 | A8 | Fit-gap `match` / `gap` / `exceed` / `not_assessed` | Done |
 | A9 | Fit-gap enqueue returns poll-friendly `generating` | Done |
 | A10 | Export refused when not complete | Done |
+| A11 | PDF export succeeds when complete, including override + Gemini UTF-8 | Done (`Exports::PdfGenerator#pdf_safe`; glyphs outside Win1252 become `?`) |
 
 ## Acceptance criteria — Web
 

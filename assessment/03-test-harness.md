@@ -31,6 +31,7 @@ cd web && npx vitest run src/utils/portfolioStatus.test.ts src/components/fitgap
 - `GET /sessions/:id/portfolio` — generating / failed + error / complete + skills / 401 without token
 - `POST …/portfolio/regenerate` — only from `failed`; second click while pending is rejected
 - Export and fit-gap refused until complete; fit-gap queues `generating`
+- PDF export with Gemini punctuation, emoji, and an assessor override (Prawn Windows-1252) returns `%PDF`, not 500
 - Override create/update, level 1–5, `overridden_by`
 - `FitGap::Engine` — `not_assessed`, `required_level`, override → `is_override` / `exceed`
 - Pending invite reuse / revoke
@@ -63,3 +64,4 @@ Until those screenshots are in the portal PDF, T3 is specified here but not yet 
 - List search is client-side after walking API pages (`per_page` max 100).
 - No browser E2E (Playwright/Cypress). Helpers + request specs cover the decision seam.
 - Workers are asserted via `perform_async` stubs, not a live Sidekiq/Gemini run.
+- PDF export is proven as HTTP 200 + `%PDF` bytes, not by inspecting glyphs. Unsupported characters are replaced with `?` (no bundled TTF).

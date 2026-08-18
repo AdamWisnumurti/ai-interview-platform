@@ -54,14 +54,24 @@ AI tooling (Cursor) was used as leverage and checked against the running product
 
 **Fix:** resolve taxonomy by id, then by label; unmatched labels stay custom. `vacancySkills` payload keeps `skill_id: null` only for true custom rows.
 
+### AV-6 — PDF 500 treated as a frontend download bug
+
+**Suggestion:** debug `FitGapReportPage` / blob download; JSON succeeding meant the export API was fine.
+
+**Risk:** assessor with a human override (the hero path) still got HTTP 500 from `prawn/fonts/afm.rb`. JSON is UTF-8; PDF is Win1252. A first sanitizer on Gemini fields still leaked the template string `AI: L3 → Override: L2`.
+
+**Check:** Network tab `export?format=pdf`; `Exports::PdfGenerator` default font; override present on the skill.
+
+**Fix:** every `pdf.text` / table cell through `pdf_safe` (UTF-8 → Windows-1252 replace → UTF-8). Request spec covers override notes plus Gemini punctuation. Not an embedded Unicode font — unsupported glyphs render as `?`.
+
 ## Smaller catches
 
 | ID | What AI/codegen got wrong | Correction |
 |----|---------------------------|------------|
-| AV-6 | Hardware retry only ran on mount (`useEffect` `[]`) | Retry must react to `LOADING` / a run id so stale async is ignored |
-| AV-7 | List pagination as a product requirement | Assessor needed search/filter; page size vs API cap added noise. Reverted to full list + `60vh` overflow |
-| AV-8 | Encrypt login password in the browser | Normal HTTPS POST. No custom FE crypto |
+| AV-7 | Hardware retry only ran on mount (`useEffect` `[]`) | Retry must react to `LOADING` / a run id so stale async is ignored |
+| AV-8 | List pagination as a product requirement | Assessor needed search/filter; page size vs API cap added noise. Reverted to full list + `60vh` overflow |
+| AV-9 | Encrypt login password in the browser | Normal HTTPS POST. No custom FE crypto |
 
 ## Rule used
 
-If a suggestion invents an endpoint, a new table, or a “complete” state without reading `end_reason` / `generation_status`, reject it and write the check into a test when it sits on the hero seam.
+If a suggestion invents an endpoint, a new table, a “complete” state without reading `end_reason` / `generation_status`, or treats a 500 as frontend-only because a sibling JSON path works, reject it and write the check into a test when it sits on the hero seam.

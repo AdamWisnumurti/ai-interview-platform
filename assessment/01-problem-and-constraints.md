@@ -24,6 +24,7 @@ There is no separate recruiter/HM role in the codebase. Those personas use the s
 | P0 | Portfolio failed / empty / generating states were not decision-safe | Defective + missing UX spec | Assessor can wait forever or hire off incomplete AI |
 | P0 | Unassessed vacancy skills and overrides were not hard enough in fit-gap | Missing spec on the presentation seam | Candidate looks “complete” when coverage is a gap |
 | P1 | `expected_level` vs `required_level`, `overridden` vs `is_override` | Defective contract | FE and API drift; comparison table lies |
+| P1 | PDF export 500 on UTF-8 while JSON succeeded | Defective | Assessor cannot take the decision file after Gemini copy or a human override |
 | P1 | No RSpec examples, no web test runner | Missing (called out in the brief) | Cannot prove the change |
 | P1 | Candidate “complete” copy on `end_reason=error` | Defective | Unfair to the person who never chose the product |
 | P2 | Vacancy skills with null `skill_id` broke prefill into “custom” | Defective | Assessor re-enters taxonomy they already defined |
@@ -36,6 +37,7 @@ There is no separate recruiter/HM role in the codebase. Those personas use the s
 - **JWT trust-without-DB:** assessor identity is the token claims. Tests stub auth; we did not invent a second user store.
 - **Shared Postgres + `ai_interview` schema:** no new migration in this slice. Override/status already existed; we hardened behavior on top.
 - **API `per_page` cap is 100:** list UIs walk `meta.total_pages`. Search/filter is client-side after that fetch — not a new search API.
+- **Prawn Helvetica is Windows-1252:** JSON export is UTF-8 and worked. PDF uses AFM/Helvetica, so Gemini punctuation, evidence bullets, emoji, and the override arrow (`→`) 500 the request. This slice transcodes to Win1252 (unsupported glyphs → `?`) instead of vendoring a TTF. Full Unicode in the PDF is a follow-up.
 - **UU PDP:** transcripts and export contain candidate data. Generation errors shown in UI are sanitized for key-like tokens. We do not log extra PII in this slice. Retention is assumed to stay with the existing platform.
 
 ## Assumptions (brief said to write them down)
