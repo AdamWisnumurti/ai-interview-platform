@@ -96,7 +96,7 @@ export default function PortfolioPage() {
     } catch (e: any) {
       setRetryError(
         e?.response?.data?.errors?.[0]?.message ??
-          "Retry failed. Portfolio can only be regenerated when status is failed."
+        "Retry failed. Portfolio can only be regenerated when status is failed."
       );
     } finally {
       setRetrying(false);
@@ -141,14 +141,14 @@ export default function PortfolioPage() {
 
   if (loading) {
     return (
-      <div className="max-w-4xl space-y-6">
+      <div className="max-w-5xl space-y-6">
         <LoadingBlock rows={3} />
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl space-y-6">
+    <div className="max-w-5xl space-y-6">
       <PageHeader
         breadcrumb={
           <Link

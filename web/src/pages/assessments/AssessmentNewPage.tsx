@@ -175,7 +175,7 @@ export default function AssessmentNewPage() {
   };
 
   return (
-    <div className="max-w-4xl space-y-6">
+    <div className="max-w-5xl space-y-6">
       <PageHeader
         breadcrumb={
           <Link

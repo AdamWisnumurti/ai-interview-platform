@@ -90,14 +90,14 @@ export default function AssessmentEditPage() {
 
   if (loading) {
     return (
-      <div className="max-w-4xl space-y-6">
+      <div className="max-w-5xl space-y-6">
         <LoadingBlock rows={3} />
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl space-y-6">
+    <div className="max-w-5xl space-y-6">
       <PageHeader
         breadcrumb={
           <Link

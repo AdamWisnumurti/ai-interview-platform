@@ -127,7 +127,7 @@ export default function LiveMonitorPage() {
 
   if (loading) {
     return (
-      <div className="max-w-4xl space-y-6">
+      <div className="max-w-5xl space-y-6">
         <LoadingBlock rows={3} />
       </div>
     );
@@ -137,7 +137,7 @@ export default function LiveMonitorPage() {
   const discoveredSkills = coverageMap?.discovered ?? [];
 
   return (
-    <div className="max-w-4xl space-y-6">
+    <div className="max-w-5xl space-y-6">
       <PageHeader
         breadcrumb={
           <Link

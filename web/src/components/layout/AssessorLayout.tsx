@@ -28,7 +28,7 @@ export default function AssessorLayout() {
       <header className="border-b border-border/80 bg-white/90 backdrop-blur sticky top-0 z-40">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 sm:gap-6 min-w-0">
-            <Link to="/assessments" className="flex items-center gap-2 shrink-0">
+            <Link to="/assessments" className="items-center gap-2 shrink-0 hidden sm:flex">
               <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10">
                 <LayoutDashboard className="h-4 w-4 text-primary" />
               </span>

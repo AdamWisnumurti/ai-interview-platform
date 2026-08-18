@@ -30,18 +30,18 @@ export function ListControls({
 }) {
   return (
     <div className="flex flex-wrap items-center gap-2 justify-between">
-      <div className="relative w-[13.5rem] max-w-full">
-        <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+      <div className="relative w-3/5 md:w-[15.35rem] max-w-full">
+        <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground " />
         <Input
           value={search}
           onChange={(e) => onSearchChange(e.target.value)}
           placeholder={searchPlaceholder}
-          className="pl-8 h-8 text-sm"
+          className="pl-8 h-8 text-xs md:text-sm"
         />
       </div>
       {showStatus && status != null && onStatusChange && (
         <Select value={status} onValueChange={(v) => onStatusChange(v as SessionListStatus)}>
-          <SelectTrigger className="h-8 w-[9.5rem] text-sm">
+          <SelectTrigger className="h-8 w-1/3 md:w-1/6 text-xs md:text-sm">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

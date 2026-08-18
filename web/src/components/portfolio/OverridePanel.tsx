@@ -60,7 +60,7 @@ export default function OverridePanel({ skill, existingOverride, onSaved }: Over
                 “{existingOverride!.assessor_notes.trim()}”
               </p>
             )}
-            <Button variant="ghost" size="sm" className="h-7 px-2" onClick={() => setOpen(true)}>
+            <Button variant="outline" size="sm" className="h-7 px-2" onClick={() => setOpen(true)}>
               <Pencil className="h-3 w-3 mr-1" /> Edit override
             </Button>
           </>

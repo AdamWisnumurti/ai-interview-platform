@@ -48,7 +48,7 @@ export default function TranscriptPage() {
   };
 
   return (
-    <div className="max-w-4xl space-y-6">
+    <div className="max-w-5xl space-y-6">
       <PageHeader
         breadcrumb={
           <Link
@@ -97,8 +97,8 @@ export default function TranscriptPage() {
               <div
                 key={turn.id}
                 className={`rounded-lg p-4 ${isAI
-                    ? "bg-muted border"
-                    : "bg-background border border-primary/20"
+                  ? "bg-muted border"
+                  : "bg-background border border-primary/20"
                   }`}
               >
                 <p
