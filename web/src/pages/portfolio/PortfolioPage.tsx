@@ -11,7 +11,11 @@ import { sessionsApi } from "@/services/sessions";
 import { vacanciesApi } from "@/services/vacancies";
 import { portfoliosApi } from "@/services/portfolios";
 import { usePolling } from "@/hooks/usePolling";
-import { normalizePortfolioResponse, type PortfolioViewStatus } from "@/utils/portfolioStatus";
+import {
+  normalizePortfolioResponse,
+  portfolioActionsAllowed,
+  type PortfolioViewStatus,
+} from "@/utils/portfolioStatus";
 import { ArrowLeft, Download, Loader2, RefreshCw, Zap, FileText, ClipboardList } from "lucide-react";
 import type { Portfolio, AssessorOverride, Vacancy } from "@/types";
 
@@ -73,6 +77,7 @@ export default function PortfolioPage() {
   const isGenerating = viewStatus === "generating";
   const isComplete = viewStatus === "complete" && !!portfolio;
   const isFailed = viewStatus === "failed";
+  const { canExport, canRetry } = portfolioActionsAllowed(viewStatus, portfolio);
 
   usePolling(fetchPortfolio, 5000, isGenerating && !loading);
 
@@ -164,7 +169,7 @@ export default function PortfolioPage() {
                 Transcript
               </Link>
             </Button>
-            {isComplete && (
+            {canExport && (
               <>
                 <Button
                   variant="outline"
@@ -216,7 +221,7 @@ export default function PortfolioPage() {
           <ErrorState
             title="Portfolio generation failed"
             description={errorMessage ?? undefined}
-            onRetry={handleRetry}
+            onRetry={canRetry ? handleRetry : undefined}
           />
           <p className="text-xs text-center text-muted-foreground">
             Do not use these results for hiring decisions until generation succeeds.

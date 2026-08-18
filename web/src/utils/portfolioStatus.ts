@@ -80,3 +80,16 @@ export function normalizePortfolioResponse(data: PortfolioFetchPayload): Normali
     errorMessage: "Portfolio status is unknown. Refresh or retry generation.",
   };
 }
+
+/** Dangerous assessor actions stay off until generation is complete (or retryable). */
+export function portfolioActionsAllowed(
+  status: PortfolioViewStatus,
+  portfolio: Portfolio | null = null
+): { canExport: boolean; canRunFitGap: boolean; canRetry: boolean } {
+  const ready = status === "complete" && portfolio != null;
+  return {
+    canExport: ready,
+    canRunFitGap: ready,
+    canRetry: status === "failed",
+  };
+}
