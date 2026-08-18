@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useMemo } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -27,7 +27,9 @@ import { sessionsApi } from "@/services/sessions";
 import { LEVEL_LABELS } from "@/utils/constants";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { EmptyState, LoadingBlock } from "@/components/shared/EmptyState";
+import { ListControls, ListScroll } from "@/components/shared/ListControls";
 import { StatusPill } from "@/components/shared/StatusPill";
+import { matchesQuery, sessionListStatus, type SessionListStatus } from "@/utils/listQuery";
 import { ArrowLeft, Copy, Check, Eye, Pencil, Clock, Plus, UserRound, Loader2, RotateCcw, Ban, FileText } from "lucide-react";
 import type { Assessment, Session } from "@/types";
 
@@ -189,6 +191,8 @@ export default function AssessmentInvitePage() {
   const [actionNotice, setActionNotice] = useState<string | null>(null);
   const [sessionToRevoke, setSessionToRevoke] = useState<Session | null>(null);
   const [revokingId, setRevokingId] = useState<number | null>(null);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<SessionListStatus>("all");
 
   const loadSessions = useCallback(async () => {
     const res = await assessmentsApi.getSessions(Number(id));
@@ -212,6 +216,15 @@ export default function AssessmentInvitePage() {
     const interval = setInterval(loadSessions, 5000);
     return () => clearInterval(interval);
   }, [sessions, loadSessions]);
+
+  const filteredSessions = useMemo(() => {
+    return sessions.filter((s, i) => {
+      const name = s.candidate_name || `Candidate ${sessions.length - i}`;
+      if (!matchesQuery(name, search)) return false;
+      if (statusFilter === "all") return true;
+      return sessionListStatus(s) === statusFilter;
+    });
+  }, [sessions, search, statusFilter]);
 
   const openInviteDialog = () => {
     setCandidateNameInput("");
@@ -383,7 +396,7 @@ export default function AssessmentInvitePage() {
       <Separator />
 
       {/* Sessions list */}
-      <div className="space-y-2">
+      <div className="space-y-3">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-semibold">
             Candidates
@@ -400,27 +413,50 @@ export default function AssessmentInvitePage() {
             description='Click "Invite Candidate" to generate an interview link.'
           />
         ) : (
-          <Card className="shadow-none overflow-hidden">
-            <CardContent className="p-0 divide-y">
-              {sessions.map((session, i) => (
-                <SessionRow
-                  key={session.id}
-                  session={session}
-                  index={sessions.length - i}
-                  assessmentId={id!}
-                  onCopy={(sid) => {
-                    const s = sessions.find((x) => x.id === sid);
-                    if (s) copyLink(s, sid);
-                  }}
-                  copiedId={copiedId}
-                  onNewLink={handleNewLink}
-                  creatingLinkId={creatingLinkId}
-                  onRevoke={setSessionToRevoke}
-                  revokingId={revokingId}
-                />
-              ))}
-            </CardContent>
-          </Card>
+          <>
+            <ListControls
+              search={search}
+              onSearchChange={setSearch}
+              searchPlaceholder="Search candidates"
+              status={statusFilter}
+              onStatusChange={setStatusFilter}
+            />
+
+            {filteredSessions.length === 0 ? (
+              <EmptyState
+                icon={UserRound}
+                title="No matching candidates"
+                description="Try a different name or status."
+              />
+            ) : (
+              <Card className="shadow-none overflow-hidden">
+                <ListScroll>
+                  <CardContent className="p-0 divide-y">
+                    {filteredSessions.map((session) => {
+                      const originalIndex = sessions.findIndex((s) => s.id === session.id);
+                      return (
+                        <SessionRow
+                          key={session.id}
+                          session={session}
+                          index={originalIndex >= 0 ? sessions.length - originalIndex : 0}
+                          assessmentId={id!}
+                          onCopy={(sid) => {
+                            const s = sessions.find((x) => x.id === sid);
+                            if (s) copyLink(s, sid);
+                          }}
+                          copiedId={copiedId}
+                          onNewLink={handleNewLink}
+                          creatingLinkId={creatingLinkId}
+                          onRevoke={setSessionToRevoke}
+                          revokingId={revokingId}
+                        />
+                      );
+                    })}
+                  </CardContent>
+                </ListScroll>
+              </Card>
+            )}
+          </>
         )}
       </div>
 
