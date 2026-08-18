@@ -113,7 +113,7 @@ export default function VacancyNewPage() {
           </div>
         )}
 
-        <div className="flex flex-wrap justify-end gap-2">
+        <div className="flex flex-wrap justify-between gap-2">
           <Button type="button" variant="outline" onClick={() => navigate("/vacancies")}>
             Cancel
           </Button>
