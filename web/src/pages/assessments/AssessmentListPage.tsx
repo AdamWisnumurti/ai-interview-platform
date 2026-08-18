@@ -22,8 +22,8 @@ export default function AssessmentListPage() {
   const load = () => {
     setLoading(true);
     setError(false);
-    collectAllPages(async (page, perPage) => {
-      const res = await assessmentsApi.list(page, perPage);
+    collectAllPages(async (page) => {
+      const res = await assessmentsApi.list(page);
       return {
         items: res.data.assessments,
         totalPages: res.data.meta?.total_pages ?? 1,

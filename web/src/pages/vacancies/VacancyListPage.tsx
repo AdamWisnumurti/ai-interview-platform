@@ -20,8 +20,8 @@ export default function VacancyListPage() {
   const load = () => {
     setLoading(true);
     setError(false);
-    collectAllPages(async (page, perPage) => {
-      const res = await vacanciesApi.list(page, perPage);
+    collectAllPages(async (page) => {
+      const res = await vacanciesApi.list(page);
       return {
         items: res.data.vacancies,
         totalPages: res.data.meta?.total_pages ?? 1,
